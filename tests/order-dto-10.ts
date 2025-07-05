@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { StatusCodes } from 'http-status-codes';
-import { OrderDto10 } from './order-dto-10h';
+import { OrderDto10 } from './dto/order-dto-10h';
 
 
 [1, 100, 1000, 100000].forEach((incomeValue) => {
