@@ -7,8 +7,8 @@ const serviceURL = 'https://backend.tallinn-learning.ee/'
 const loginPath = 'login/student'
 const orderPath = 'orders'
 
-// JWT pattern in the form of a regular expression
-const jwtPattern = /^eyJhb[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/
+
+
 
 test.describe('Tallinn delivery API tests', () => {
   test('login with correct data and verify auth token', async ({ request }) => {
@@ -17,12 +17,13 @@ test.describe('Tallinn delivery API tests', () => {
     const response = await request.post(`${serviceURL}${loginPath}`, {
       data: requestBody,
     })
+    expect(response.status()).toBe(StatusCodes.OK)
     const responseBody = await response.text()
+    const jwtRegex = /^eyJhb[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/
 
     console.log('response code:', response.status())
     console.log('response body:', responseBody)
-    expect(response.status()).toBe(StatusCodes.OK)
-    expect(jwtPattern.test(responseBody)).toBeTruthy()
+    expect(jwtRegex.test(responseBody)).toBeTruthy()
   })
 
   test('login with incorrect data and verify response code 401', async ({ request }) => {
@@ -58,5 +59,44 @@ test.describe('Tallinn delivery API tests', () => {
     expect.soft(orderResponse.status()).toBe(StatusCodes.OK)
     expect.soft(orderResponseBody.status).toBe('OPEN')
     expect.soft(orderResponseBody.id).toBeDefined()
+  })
+//TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST
+  test('login with correct credentials returns valid JWT token', async ({ request }) => {
+    const requestBody = LoginDto.createLoginWithCorrectData()
+
+    const response = await request.post(`${serviceURL}${loginPath}`, {
+      data: requestBody,
+    })
+
+    const jwt = await response.text()
+
+    console.log('Login response code:', response.status())
+    console.log('JWT:', jwt)
+
+    expect(response.status()).toBe(StatusCodes.OK)
+
+    const jwtPattern = /^eyJhb[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/
+    expect(jwt).toMatch(jwtPattern)
+  })
+
+  test('login with incorrect HTTP method (GET instead of POST)', async ({ request }) => {
+    const response = await request.get(`${serviceURL}${loginPath}`)
+    console.log('Incorrect method response code:', response.status())
+    expect(response.status()).toBe(StatusCodes.METHOD_NOT_ALLOWED)
+  })
+
+  test('login with malformed body (missing fields)', async ({ request }) => {
+    const malformedBody = { username: 'wrongField' }
+
+    const response = await request.post(`${serviceURL}${loginPath}`, {
+      data: malformedBody,
+    })
+
+    const responseText = await response.text()
+    console.log('Malformed body response code:', response.status())
+    console.log('Malformed body response:', responseText)
+
+    expect(response.status()).toBeGreaterThanOrEqual(400)
+    expect(response.status()).toBeLessThan(500)
   })
 })
