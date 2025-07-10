@@ -8,7 +8,7 @@ export class LoginDto {
   }
 
   static createLoginWithCorrectData(): LoginDto {
-    return new LoginDto(process.env.USER || '', process.env.PASSWORD || '')
+    return new LoginDto('daniil_brd', 'Z3x4W5y6') // <-- замените на рабочие данные
   }
 
   static createLoginWithIncorrectData(): LoginDto {

@@ -7,9 +7,6 @@ const serviceURL = 'https://backend.tallinn-learning.ee/'
 const loginPath = 'login/student'
 const orderPath = 'orders'
 
-
-
-
 test.describe('Tallinn delivery API tests', () => {
   test('login with correct data and verify auth token', async ({ request }) => {
     const requestBody = LoginDto.createLoginWithCorrectData()
@@ -60,7 +57,7 @@ test.describe('Tallinn delivery API tests', () => {
     expect.soft(orderResponseBody.status).toBe('OPEN')
     expect.soft(orderResponseBody.id).toBeDefined()
   })
-//TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST
+  //TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST
   test('login with correct credentials returns valid JWT token', async ({ request }) => {
     const requestBody = LoginDto.createLoginWithCorrectData()
 
